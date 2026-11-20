@@ -1,0 +1,29 @@
+name: Setup Site URL
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/setup-site-url.yml']
+permissions:
+  actions: write
+  contents: write
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set SHELL_SITE_URL variable via API
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python3 - <<'PY'
+          import urllib.request, json, os
+          api = 'https://api.github.com/repos/qwertyu909/doremy-float-phone/actions/variables'
+          h = {'Authorization': 'Bearer ' + os.environ['GH_TOKEN'], 'Accept': 'application/vnd.github+json', 'Content-Type': 'application/json'}
+          body = json.dumps({'name': 'SHELL_SITE_URL', 'value': 'https://doremy-float-phone-alpha.vercel.app'}).encode()
+          try:
+              req = urllib.request.Request(api, data=body, method='POST', headers=h)
+              print('created status:', urllib.request.urlopen(req).status)
+          except Exception:
+              req = urllib.request.Request(api + '/SHELL_SITE_URL', data=body, method='PATCH', headers=h)
+              print('updated status:', urllib.request.urlopen(req).status)
+          PY
