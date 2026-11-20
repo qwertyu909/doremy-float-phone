@@ -283,6 +283,8 @@ class MainActivity : AppCompatActivity() {
 
         webView.settings.apply {
             javaScriptEnabled = true
+            useWideViewPort = true
+            loadWithOverviewMode = true
             domStorageEnabled = true
             databaseEnabled = true
             mediaPlaybackRequiresUserGesture = false
