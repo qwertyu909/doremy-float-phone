@@ -1,4 +1,4 @@
-name: Remove Proxy
+name: Remove Proxy v2
 on:
   workflow_dispatch:
   push:
