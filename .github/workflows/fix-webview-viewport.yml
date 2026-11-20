@@ -1,1 +1,29 @@
-bmFtZTogRml4IFdlYlZpZXcgVmlld3BvcnQKCml2jogcHVzaDogCiAgICBicmFuY2hlczogW21haW5dCiAgICBwYXRoczogCiAgICAgIC0gJy5naXRodWIvd29ya2Zsb3dzL2ZpeC13ZWJ2aWV3LXZpZXdwb3J0LnltbCcgCiAgd29ya2Zsb3dfZGlzcGF0Y2g6CgpwZXJtaXNzaW9uczogCiAgY29udGVudHM6IHdyaXRlCgpqb2JzOgogIGZpeDoKICAgIHJ1bnMtb246IHViYW50dS1sYXRlc3QgCiAgICBzdGVwczoKICAgICAgLSB1c2VzOiBhY3Rpb25zL2NoZWNrb3V0QHY0CiAgICAgICAgd2l0aDogCiAgICAgICAgICByZWY6IG1haW4KICAgICAgLSBuYW1lOiBBcHBseSB2aWV3cG9ydCBmaXggdG8gTWFpbkFjdGl2aXR5Lmt0CiAgICAgICAgcnVuOiB8CiAgICAgICAgICBweXRob24zIC0gPDwgJ1BZJwogICAgICAgICAgcGF0aCA9ICdhbmRyb2lkLXNoZWxsL2FwcC9zcmMvbWFpbi9qYXZhL2FwcC9mbG9hdHBob25lL3NoZWxsL01haW5BY3Rpdml0eS5rdCcKICAgICAgICAgIHNyYyA9IG9wZW4ocGF0aCwgZW5jb2Rpbmc9J3V0Zi04JykucmVhZCgpCiAgICAgICAgICBvbGQgPSAnICAgICAgICBqYXZhU2NyaXB0RW5hYmxlZCA9IHRydWUKICAgICAgICAgIGRvbVN0b3JhZ2VFbmFibGVkID0gdHJ1ZScKICAgICAgICAgIG5ldyA9ICcgICAgICAgICBqYXZhU2NyaXB0RW5hYmxlZCA9IHRydWUKICAgICAgICAgIC8vIFJlc3BlY3QgdGhlIHBhZ2Ugdmlld3BvcnQgbWV0YSAod2lkdGg9ZGV2aWNlLXdpZHRoLCB2aWV3cG9ydEZpdD1jb3ZlcikuCiAgICAgICAgIC8vIFdpdGhvdXQgdGhpcywgV2ViVmlldyBsYXlvdXQgYXQgZGVza3RvcCA5ODBweCB0aGVuIHNjYWxlcywgY2F1c2luZyBibGFjayBiYXJzICsgbGFnLiAKICAgICAgICAgdXNlV2lkZVZpZXdQb3J0ID0gdHJ1ZQogICAgICAgICBsb2FkV2l0aE92ZXJ2aWV3TW9kZSA9IHRydWUKICAgICAgICAgIGRvbVN0b3JhZ2VFbmFibGVkID0gdHJ1ZScKICAgICAgICAgIGlmIG9sZCBpbiBzcmM6CiAgICAgICAgICAgICBzcmMgPSBzcmMucmVwbGFjZShvbGQsIG5ldywgMSkKICAgICAgICAgICAgIHByaW50KCd2aWV3cG9ydCBmaXggYXBwbGllZCcpCiAgICAgICAgICBlbHNlOgogICAgICAgICAgICAgcHJpbnQoJ2FuY2hvciBub3QgZm91bmQsIGFscmVhZHkgZml4ZWQ/JykKICAgICAgICAgIG9wZW4ocGF0aCwgJ3cnLCBlbmNvZGluZz0ndXRmLTgnKS53cml0ZShzcmMpCiAgICAgICAgIFBZCiAgICAgIC0gbmFtZTogUmVtb3ZlIHRlc3QgZmlsZQogICAgICAgIHJ1bjogcm0gLWYgUEFUQ0hfRk9STUFUX1RFU1QubWQgCgogICAgICAtIG5hbWU6IENvbW1pdCBjaGFuZ2VzCiAgICAgICAgcnVuOiB8CiAgICAgICAgICBnaXQgY29uZmlnIHVzZXIubmFtZSAiZml4LWJvdCIKICAgICAgICAgIGdpdCBjb25maWcgdXNlci5lbWFpbCBcImZpeC1ib3RAc2VydmVycy5ub3JlcGx5LmdpdGh1Yi5jb20iCiAgICAgICAgICBnaXQgYWRkIC0AICAgICAgICAgICAgCiAgICAgICAgICBpZiAhIGdpdCBkaWZmIC0tY2FjaGVkIC0tcXVpZXQ7IHRoZW4KICAgICAgICAgICAgIGdpdCBjb21taXQgLW0gXCJmaXg6IFdlYlZpZXcgcmVzcGVjdCB2aWV3cG9ydCB0byByZW1vdmUgYmxhY2sgYmFycyBhbmQgbGFnXCIKICAgICAgICAgICAgIGdpdCBwdXNoIG9yaWdpbiBIRUFEOm1haW4KICAgICAgICAgIGZpCiAgICAgICAgIFNIRUxM
+name: Fix WebView Viewport
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/fix-webview-viewport.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Apply viewport fix
+        run: python3 -c "p='android-shell/app/src/main/java/app/floatphone/shell/MainActivity.kt';s=open(p,encoding='utf-8').read();o='            javaScriptEnabled = true\n            domStorageEnabled = true';n='            javaScriptEnabled = true\n            useWideViewPort = true\n            loadWithOverviewMode = true\n            domStorageEnabled = true';print('applied' if o in s else 'skip');open(p,'w',encoding='utf-8').write(s.replace(o,n,1))"
+      - name: Cleanup
+        run: rm -f PATCH_FORMAT_TEST.md
+      - name: Commit
+        run: |
+          git config user.name fix-bot
+          git config user.email fix-bot@users.noreply.github.com
+          git add -A
+          if ! git diff --cached --quiet; then
+            git commit -m "fix: WebView respect viewport meta"
+            git push origin HEAD:main
+          fi
