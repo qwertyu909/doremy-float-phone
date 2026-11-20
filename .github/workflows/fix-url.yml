@@ -1,0 +1,34 @@
+name: Fix URL
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/fix-url.yml']
+permissions:
+  contents: write
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Patch build.gradle via API
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python3 - <<'PY'
+          import urllib.request, json, base64, os
+          api = 'https://api.github.com/repos/qwertyu909/doremy-float-phone/contents/android-shell/app/build.gradle?ref=main'
+          h = {'Authorization': 'Bearer ' + os.environ['GH_TOKEN'], 'Accept': 'application/vnd.github+json'}
+          d = json.load(urllib.request.urlopen(urllib.request.Request(api, headers=h)))
+          s = base64.b64decode(d['content']).decode('utf-8')
+          old = 'def siteUrl = (System.getenv("SHELL_SITE_URL") ?: "https://example.invalid").replaceAll(\'/+$,\', \'\')'
+          new = 'def siteUrl = "https://doremy-float-phone-alpha.vercel.app"'
+          if new in s:
+              print('already hardcoded')
+          elif old in s:
+              s = s.replace(old, new, 1)
+              body = json.dumps({'message': 'fix: hardcode site url in build.gradle', 'content': base64.b64encode(s.encode()).decode(), 'sha': d['sha'], 'branch': 'main'}).encode()
+              r = urllib.request.Request(api.split('?')[0], data=body, method='PUT', headers={**h, 'Content-Type': 'application/json'})
+              print('commit:', json.load(urllib.request.urlopen(r))['commit']['sha'])
+          else:
+              print('anchor not found')
+          PY
