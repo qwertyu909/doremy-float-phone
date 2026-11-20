@@ -2,8 +2,7 @@ name: Fix Mobile Breakpoint
 on:
   push:
     branches: [main]
-    paths:
-      - '.github/workflows/fix-breakpoint.yml'
+    paths: ['.github/workflows/fix-breakpoint.yml']
   workflow_dispatch:
 permissions:
   contents: write
@@ -15,13 +14,11 @@ jobs:
         with:
           ref: main
       - name: Patch breakpoint
-        run: python3 -c "p='styles/phone-shell.css';s=open(p,encoding='utf-8').read();old='@media (max-width: 500px) and (hover: none) and (pointer: coarse) {';new='@media (max-width: 500px) {';print('patched' if old in s else 'skip');open(p,'w',encoding='utf-8').write(s.replace(old,new,1))"
+        run: sed -i 's/@media (max-width: 500px) and (hover: none) and (pointer: coarse) {/@media (max-width: 500px) {/' styles/phone-shell.css
       - name: Commit
         run: |
           git config user.name fix-bot
           git config user.email fix-bot@users.noreply.github.com
-          git add -A
-          if ! git diff --cached --quiet; then
-            git commit -m "fix: mobile fullscreen breakpoint for WebView"
-            git push origin HEAD:main
-          fi
+          git add styles/phone-shell.css
+          git commit -m "fix: mobile fullscreen breakpoint for WebView" || echo no-change
+          git push
